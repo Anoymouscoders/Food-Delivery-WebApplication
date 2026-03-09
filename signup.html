@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <!-- Import Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Import Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Main container to center the sign-up form -->
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            
+            <!-- Form Card -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg space-y-6">
+                
+                <!-- Header -->
+                <div>
+                    <h2 class="text-center text-3xl font-bold text-gray-900">
+                        Create your account
+                    </h2>
+                    <p class="mt-2 text-center text-sm text-gray-600">
+                        It's free and only takes a minute.
+                    </p>
+                </div>
+
+                <!-- Sign Up Form -->
+                <form class="space-y-6" action="signup" method="POST">
+                <div>
+                    <label for="name">Full Name</label>
+                    <input id="name" name="name" type="text" required
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div>
+                    <label for="email">Email Address</label>
+                    <input id="email" name="email" type="email" required
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div>
+                    <label for="password">Create Password</label>
+                    <input id="password" name="password" type="password" required
+                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox" required
+                        class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                        I agree to the Terms and Privacy Policy.
+                    </label>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700">
+                    Create Account
+                </button>
+            </form>
+
+                
+                
+
+            </div>
+            
+            <!-- Sign In Link -->
+            <p class="text-center text-sm text-gray-600">
+                Already have an account?
+                <!-- This link now points to login.html -->
+                <a href="login.html" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    Sign in
+                </a>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- <script>
+        // Add JavaScript to handle form submission
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            // Prevent the form from actually submitting
+            event.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const messageDiv = document.getElementById('form-message');
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                messageDiv.textContent = 'Error: Passwords do not match.';
+                messageDiv.className = 'text-sm text-red-600 font-medium';
+            } else {
+                messageDiv.textContent = 'Account created successfully! Redirecting to sign in...';
+                messageDiv.className = 'text-sm text-green-600 font-medium';
+                
+                // In a real app, you'd also check password strength
+                // and then send the new account data to a server.
+
+                // Wait 2 seconds and then redirect to the login page
+                setTimeout(function() {
+                    window.location.href = './login.html';
+                }, 2000); // 2000 milliseconds = 2 seconds
+            }
+        });
+    </script> -->
+
+</body>
+</html>

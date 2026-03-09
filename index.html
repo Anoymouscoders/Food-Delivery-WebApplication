@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>1 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite - Food Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .hero-section {
+            background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .restaurant-card, .category-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .restaurant-card:hover, .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .app-section {
+            background-color: #fffaf0;
+        }
+        .modal-overlay, #cart-panel {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content, #cart-panel-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        #cart-panel {
+            transition: transform 0.3s ease-in-out;
+        }
+        /* Style for deal items */
+        .deal-item-tag {
+             position: absolute;
+             top: 0.5rem;
+             left: 0.5rem;
+             background-color: #dc2626; /* Red-600 */
+             color: white;
+             padding: 0.25rem 0.5rem;
+             font-size: 0.75rem; /* text-xs */
+             font-weight: 600; /* font-semibold */
+             border-radius: 0.375rem; /* rounded-md */
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+            <a href="index.html" class="text-2xl font-bold text-orange-600">QuickBite</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-orange-600 font-semibold border-b-2 border-orange-600 pb-1">Home</a>
+                <a href="restaurants.html" class="text-gray-600 hover:text-orange-600 transition-colors">Restaurants</a>
+                <a href="deals.html" class="text-gray-600 hover:text-orange-600 transition-colors">Deals</a>
+                <a href="orders.html" class="relative text-gray-600 hover:text-orange-600 transition-colors" title="Order History">
+                    <i class="fas fa-receipt text-xl"></i>
+                </a>
+                <button id="cart-icon-btn" class="relative text-gray-600 hover:text-orange-600 transition-colors" title="View Cart">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-3 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                <a href="signup.html" class="bg-orange-600 text-white px-5 py-2 rounded-full hover:bg-orange-700 transition-colors">Sign In</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden flex items-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4">
+            <a href="index.html" class="block text-orange-600 bg-orange-50 px-6 py-2">Home</a>
+            <a href="restaurants.html" class="block text-gray-600 hover:bg-orange-50 px-6 py-2">Restaurants</a>
+            <a href="deals.html" class="block text-gray-600 hover:bg-orange-50 px-6 py-2">Deals</a>
+            <a href="orders.html" class="block text-gray-600 hover:bg-orange-50 px-6 py-2"><i class="fas fa-receipt mr-2"></i>Order History</a>
+            <a href="#" id="mobile-cart-btn" class="block text-gray-600 hover:bg-orange-50 px-6 py-2 relative"><i class="fas fa-shopping-cart mr-2"></i>Cart <span id="mobile-cart-count" class="absolute top-2 right-6 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span></a>
+            <a href="signup.html" class="block bg-orange-600 text-white mx-6 my-2 px-5 py-2 rounded-full text-center">Sign In</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section text-white">
+            <div class="bg-black bg-opacity-50 h-full">
+                <div class="container mx-auto px-6 py-32 text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4">Craving something delicious?</h1>
+                    <p class="text-lg md:text-xl mb-8">Your favorite meals, delivered fast to your door.</p>
+                    <div class="max-w-2xl mx-auto">
+                        <div class="flex items-center bg-white rounded-full shadow-lg p-2">
+                            <input id="address-input" type="text" placeholder="Search for dishes..." class="w-full py-3 px-4 text-gray-700 rounded-full focus:outline-none">
+                            <button id="find-food-btn" class="bg-orange-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-700 transition-colors">Find Food</button>
+                        </div>
+                        <div id="message-box" class="mt-4 text-white text-center font-semibold h-6"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="search-results" class="py-16 hidden">
+             <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Search Results</h2>
+                <div id="search-results-container" class="space-y-8">
+                    </div>
+            </div>
+        </section>
+
+        <section id="top-categories-section" class="py-16">
+            <div class="container mx-auto px-6">
+                 <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Top Categories</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
+                    <a href="category.html?name=pizza" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/o2_assets/d0bd7c9405ac87f6aa65e31fe55800941632716575.png" alt="Pizza">
+                        <h3 class="font-semibold text-gray-700">Pizza</h3>
+                    </a>
+                    <a href="category.html?name=burger" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/dish_images/ccb7dc2ba2b054419f805da7f05704471634886169.png" alt="Burgers">
+                        <h3 class="font-semibold text-gray-700">Burgers</h3>
+                    </a>
+                    <a href="category.html?name=thali" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/o2_assets/52eb9796bb9bcf0eba64c643349e97211634401116.png" alt="Thali">
+                        <h3 class="font-semibold text-gray-700">Thali</h3>
+                    </a>
+                    <a href="category.html?name=chicken" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/dish_images/197987b7ebcd1ee08f8c25ea4e77e20f1634731334.png" alt="Fried Chicken">
+                        <h3 class="font-semibold text-gray-700">Fried Chicken</h3>
+                    </a>
+                    <a href="category.html?name=cake" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/dish_images/d5ab931c8c239271de45e1c159af94311634805744.png" alt="Cake">
+                        <h3 class="font-semibold text-gray-700">Cake</h3>
+                    </a>
+                    <a href="category.html?name=roll" class="block bg-white p-6 rounded-lg shadow-md category-card">
+                        <img src="https://b.zmtcdn.com/data/dish_images/c2f22c42f7ba90d81440a88449f4e5891634806087.png" alt="Roll">
+                        <h3 class="font-semibold text-gray-700">Roll</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="restaurants-section" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Featured Restaurants</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <a href="restaurant.html?id=1" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/pictures/7/21871227/e6f2c3247f6ffd6f7e1ea6b1e25aa59a_o2_featured_v2.jpg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">The Curry House</h3><p class="text-gray-600 mb-4">Indian, North Indian</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.5</span></div><span class="text-sm text-gray-600">30-40 min</span></div></div></div>
+                    </a>
+                    <a href="restaurant.html?id=2" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/dish_photos/68d/f7ef8df0fed856ee03c983f156fbb68d.jpg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">Pizza Planet</h3><p class="text-gray-600 mb-4">Italian, Pizza</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.7</span></div><span class="text-sm text-gray-600">25-35 min</span></div></div></div>
+                    </a>
+                    <a href="restaurant.html?id=3" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/dish_photos/01c/c13b152416d1ebd6edd72f0c877d701c.jpeg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">Burger Barn</h3><p class="text-gray-600 mb-4">American, Burgers</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.3</span></div><span class="text-sm text-gray-600">20-30 min</span></div></div></div>
+                    </a>
+                    <a href="restaurant.html?id=4" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/dish_photos/1bb/91a77d12116161304ba8d278ee8231bb.jpg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">Sushi Spot</h3><p class="text-gray-600 mb-4">Japanese, Sushi</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.8</span></div><span class="text-sm text-gray-600">40-50 min</span></div></div></div>
+                    </a>
+                    <a href="restaurant.html?id=5" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/pictures/2/21530452/d280deeebf425801a172d2d2eaa1bdc4_o2_featured_v2.jpg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">Taco Town</h3><p class="text-gray-600 mb-4">Mexican, Tacos</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.6</span></div><span class="text-sm text-gray-600">20-25 min</span></div></div></div>
+                    </a>
+                    <a href="restaurant.html?id=6" class="block rounded-lg overflow-hidden shadow-md restaurant-card">
+                        <div class="bg-white"><img src="https://b.zmtcdn.com/data/dish_photos/826/eabb7c12eada52553aab8731b1a28826.jpg" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-semibold text-gray-800 mb-2">Noodle House</h3><p class="text-gray-600 mb-4">Thai, Noodles</p><div class="flex justify-between items-center"><div class="flex items-center"><i class="fas fa-star text-yellow-500 mr-1"></i><span class="text-gray-700 font-bold">4.4</span></div><span class="text-sm text-gray-600">35-45 min</span></div></div></div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="app-download-section" class="app-section py-20">
+             <div class="container mx-auto px-6 text-center"><h2 class="text-3xl font-bold text-gray-800 mb-4">Get the QuickBite App</h2><p class="text-gray-600 mb-8 max-w-2xl mx-auto">Order from your favorite restaurants on the go with our easy-to-use app. Get real-time order tracking and exclusive app-only deals!</p><div class="flex justify-center space-x-4"><a href="#" class="bg-black text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-800 transition-colors"><i class="fab fa-apple text-2xl"></i><div><p class="text-xs">Download on the</p><p class="font-semibold">App Store</p></div></a><a href="#" class="bg-black text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-800 transition-colors"><i class="fab fa-google-play text-2xl"></i><div><p class="text-xs">GET IT ON</p><p class="font-semibold">Google Play</p></div></a></div></div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8"><div><h4 class="text-lg font-semibold mb-4">QuickBite</h4><p class="text-gray-400">Bringing your favorite local restaurants right to your doorstep.</p></div><div><h4 class="text-lg font-semibold mb-4">Quick Links</h4><ul><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">About Us</a></li><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Contact</a></li><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Careers</a></li></ul></div><div><h4 class="text-lg font-semibold mb-4">Legal</h4><ul><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li><li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li></ul></div><div><h4 class="text-lg font-semibold mb-4">Get Deals</h4><p class="text-gray-400 mb-4">Sign up to get the latest deals and updates.</p><div class="flex"><input type="email" placeholder="Your Email" class="w-full py-2 px-3 text-gray-800 rounded-l-md focus:outline-none"><button class="bg-orange-600 text-white px-4 py-2 rounded-r-md hover:bg-orange-700">Subscribe</button></div></div></div><div class="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-center md:text-left mb-4 md:mb-0">&copy; 2025 QuickBite. All rights reserved.</p><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a><a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a><a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a></div></div></div>
+    </footer>
+    
+    <button id="scroll-to-top" class="hidden fixed bottom-6 right-6 bg-orange-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-orange-700 transition-colors flex items-center justify-center z-50"><i class="fas fa-arrow-up"></i></button>
+    
+    <div id="item-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[70] flex items-center justify-center p-4 modal-overlay opacity-0">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-md modal-content transform scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <h2 id="modal-restaurant-name" class="text-2xl font-bold text-gray-800">Add Item to Cart</h2>
+                    <button id="close-item-modal-btn" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times text-2xl"></i></button>
+                </div>
+                <div class="mt-6">
+                    <img id="modal-item-img" src="" alt="Food item" class="w-full h-48 object-cover rounded-md">
+                    <h3 id="modal-item-name" class="text-xl font-semibold text-gray-800 mt-4"></h3>
+                    <p id="modal-item-desc" class="text-gray-600 mt-2"></p>
+                    <p id="modal-item-price" class="text-2xl font-bold text-orange-600 mt-4"></p>
+                </div>
+                <div class="mt-6 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="decrease-quantity" class="bg-gray-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-gray-300">-</button>
+                        <input id="item-quantity" type="text" value="1" readonly class="w-16 text-center font-bold text-lg mx-2">
+                        <button id="increase-quantity" class="bg-gray-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-gray-300">+</button>
+                    </div>
+                    <button id="add-to-cart-btn" class="bg-orange-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-700 transition-colors">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60] opacity-0"><div id="cart-panel-content" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full flex flex-col"><div class="p-6 flex justify-between items-center border-b"><h2 class="text-2xl font-bold text-gray-800">Your Cart</h2><button id="close-cart-btn" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times text-2xl"></i></button></div><div id="cart-items-container" class="flex-grow p-6 overflow-y-auto"></div><div class="p-6 border-t"><div class="flex justify-between items-center mb-4"><span class="text-lg font-medium text-gray-700">Subtotal:</span><span id="cart-subtotal" class="text-xl font-bold text-gray-900">₹0</span></div><button id="checkout-btn" class="w-full bg-orange-600 text-white py-3 rounded-full font-semibold hover:bg-orange-700 transition-colors">Proceed to Checkout</button></div></div></div>
+    
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+    <div id="restaurant-list"></div>
+    <script>
+    async function loadRestaurants() {
+    const res = await fetch('http://localhost:8080/food-web/restaurants');
+    const restaurants = await res.json();
+
+    const container = document.getElementById('restaurant-list');
+    container.innerHTML = '';
+
+    restaurants.forEach(r => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <img src="${r.image_url}" width="200">
+        <h3>${r.name}</h3>
+        <p>${r.location}</p>
+        <button onclick="loadMenu(${r.id})">View Menu</button>
+        `;
+        container.appendChild(div);
+    });
+    }
+
+    async function loadMenu(id) {
+    const res = await fetch(`http://localhost:8080/food-web/menu?id=${id}`);
+    const menu = await res.json();
+    alert(menu.map(m => `${m.item_name} - ₹${m.price}`).join('\n'));
+    }
+
+    loadRestaurants();
+    </script>
+
+    
+
+</body>
+</html>
